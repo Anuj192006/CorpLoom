@@ -1,81 +1,74 @@
-import { useState, useEffect } from 'react'
-import './App.css'
-import Auth from './components/Auth'
+import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
+import { useAuth, AuthProvider } from './context/AuthContext';
 
-function App() {
-  const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(true)
+// Pages
+import Login from './pages/Login';
+import Register from './pages/Register';
+import RegisterCompany from './pages/RegisterCompany';
+import Dashboard from './pages/Dashboard';
+import Employees from './pages/Employees';
+import Departments from './pages/Departments';
+import Attendance from './pages/Attendance';
+import Profile from './pages/Profile';
 
-  useEffect(() => {
-    // Check for existing session
-    const savedUser = localStorage.getItem('user')
-    if (savedUser) {
-      setUser(JSON.parse(savedUser))
-    }
-    setLoading(false)
-  }, [])
+const ProtectedRoute = ({ children, adminOnly = false }) => {
+  const { user, loading } = useAuth();
+  if (loading) return <div>Loading...</div>;
+  if (!user) return <Navigate to="/login" />;
+  if (adminOnly && user.role !== 'ADMIN') return <Navigate to="/dashboard" />;
+  return children;
+};
 
-  const handleLogout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
-    setUser(null)
-  }
-
-  if (loading) {
-    return (
-      <div className="badge pulse" style={{ marginTop: '20vh' }}>
-        Initializing CorpLoom...
-      </div>
-    )
-  }
-
-  if (!user) {
-    return <Auth onAuthSuccess={setUser} />
-  }
+const Navbar = () => {
+  const { user, logout } = useAuth();
+  if (!user) return null;
 
   return (
-    <div className="dashboard-container">
-      <div className="user-header">
-        <div>
-          <div className="badge">
-            <div className="dot pulse"></div>
-            Session Active
-          </div>
-          <h1 style={{ textAlign: 'left', fontSize: '2.5rem' }}>Welcome, {user.name || 'User'}</h1>
-          <p style={{ color: 'rgba(255,255,255,0.5)', marginTop: '0.5rem' }}>
-            Account: {user.email}
-          </p>
-        </div>
-        <button className="logout-btn" onClick={handleLogout}>
-          Sign Out
-        </button>
+    <nav className="nav">
+      <div className="nav-logo">
+        <Link to="/dashboard" style={{ fontSize: '1.25rem', fontWeight: 'bold', textDecoration: 'none', color: 'var(--primary)' }}>
+          EMS Portal
+        </Link>
       </div>
+      <div className="nav-links">
+        <Link to="/dashboard">Dashboard</Link>
+        {user.role === 'ADMIN' && (
+          <>
+            <Link to="/employees">Employees</Link>
+            <Link to="/departments">Org Management</Link>
+          </>
+        )}
+        <Link to="/attendance">Attendance</Link>
+        <Link to="/profile">Profile</Link>
+        <button onClick={logout} className="btn btn-secondary" style={{ padding: '4px 10px' }}>Logout</button>
+      </div>
+    </nav>
+  );
+};
 
-      <div className="glass-card" style={{ maxWidth: 'none', textAlign: 'left' }}>
-        <h2 style={{ marginBottom: '1.5rem', fontWeight: '600' }}>Your Dashboard</h2>
-        <p style={{ color: 'var(--text-dim)', lineHeight: '1.8' }}>
-          Welcome to the official **CorpLoom** workspace. Your account is secured with JWT encryption 
-          and your data is stored in our Prisma-managed PostgreSQL database.
-        </p>
-        
-        <div style={{ 
-          marginTop: '2rem', 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
-          gap: '1.5rem' 
-        }}>
-          <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1.5rem', borderRadius: '20px', border: '1px solid var(--border-color)' }}>
-            <h3 style={{ fontSize: '1rem', color: 'var(--primary)', marginBottom: '0.5rem' }}>Profile Status</h3>
-            <p style={{ fontSize: '0.9rem', color: 'var(--text-dim)' }}>Verified Member</p>
-          </div>
-          <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1.5rem', borderRadius: '20px', border: '1px solid var(--border-color)' }}>
-            <h3 style={{ fontSize: '1rem', color: 'var(--primary)', marginBottom: '0.5rem' }}>Data Sync</h3>
-            <p style={{ fontSize: '0.9rem', color: 'var(--text-dim)' }}>Live Connection</p>
-          </div>
+function App() {
+  return (
+    <AuthProvider>
+      <Router>
+        <Navbar />
+        <div className="container">
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/register-company" element={<RegisterCompany />} />
+            
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/employees" element={<ProtectedRoute adminOnly><Employees /></ProtectedRoute>} />
+            <Route path="/departments" element={<ProtectedRoute adminOnly><Departments /></ProtectedRoute>} />
+            <Route path="/attendance" element={<ProtectedRoute><Attendance /></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+            
+            <Route path="/" element={<Navigate to="/dashboard" />} />
+          </Routes>
         </div>
-      </div>
-    </div>
-  )
+      </Router>
+    </AuthProvider>
+  );
 }
 
-export default App
+export default App;
