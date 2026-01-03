@@ -11,7 +11,7 @@ const Auth = ({ onAuthSuccess }) => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const API_URL = 'http://localhost:5001/api/auth';
+  const API_URL = 'https://corploom.onrender.com/api/auth';
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

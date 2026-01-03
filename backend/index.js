@@ -10,7 +10,11 @@ const prisma = new PrismaClient();
 const PORT = process.env.PORT || 5001;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-key-123456';
 
-app.use(cors());
+app.use(cors({
+    origin: 'https://corp-loom.vercel.app',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true
+}));
 app.use(express.json());
 
 // Status endpoint
@@ -80,5 +84,5 @@ app.post('/api/auth/login', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`Server is running on port ${PORT}`);
 });
