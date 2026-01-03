@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,11 +7,76 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Company {
+  id           Int          @id @default(autoincrement())
+  name         String
+  companyCode  String       @unique
+  users        User[]
+  departments  Department[]
+  roles        OrgRole[]
+  attendances  Attendance[]
+  createdAt    DateTime     @default(now())
+}
+
+enum Role {
+  ADMIN
+  EMPLOYEE
+}
+
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           Int          @id @default(autoincrement())
+  name         String
+  email        String       @unique
+  password     String
+  role         Role         @default(EMPLOYEE)
+  companyId    Int
+  company      Company      @relation(fields: [companyId], references: [id])
+  employee     Employee?
+  attendances  Attendance[]
+  createdAt    DateTime     @default(now())
+}
+
+enum EmployeeStatus {
+  ACTIVE
+  ON_LEAVE
+  RESIGNED
+}
+
+model Employee {
+  id            Int            @id @default(autoincrement())
+  userId        Int            @unique
+  user          User           @relation(fields: [userId], references: [id])
+  departmentId  Int
+  department    Department     @relation(fields: [departmentId], references: [id])
+  orgRoleId     Int
+  orgRole       OrgRole        @relation(fields: [orgRoleId], references: [id])
+  dateOfJoining DateTime       @default(now())
+  status        EmployeeStatus @default(ACTIVE)
+}
+
+model Department {
+  id        Int        @id @default(autoincrement())
+  name      String
+  companyId Int
+  company   Company    @relation(fields: [companyId], references: [id])
+  employees Employee[]
+}
+
+model OrgRole {
+  id        Int        @id @default(autoincrement())
+  name      String
+  companyId Int
+  company   Company    @relation(fields: [companyId], references: [id])
+  employees Employee[]
+}
+
+model Attendance {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id])
+  companyId Int
+  company   Company   @relation(fields: [companyId], references: [id])
+  date      DateTime  @default(now())
+  checkIn   DateTime?
+  checkOut  DateTime?
 }
