@@ -15,8 +15,8 @@ const Departments = () => {
   const fetchData = async () => {
     try {
       const [dRes, rRes] = await Promise.all([
-        fetch('http://localhost:5001/api/org/departments', { headers: { 'Authorization': `Bearer ${token}` } }),
-        fetch('http://localhost:5001/api/org/roles', { headers: { 'Authorization': `Bearer ${token}` } })
+        fetch('/api/org/departments', { headers: { 'Authorization': `Bearer ${token}` } }),
+        fetch('/api/org/roles', { headers: { 'Authorization': `Bearer ${token}` } })
       ]);
       setDepts(await dRes.json());
       setRoles(await rRes.json());
@@ -28,7 +28,7 @@ const Departments = () => {
   const addDept = async (e) => {
     e.preventDefault();
     if (!newDept) return;
-    await fetch('http://localhost:5001/api/org/departments', {
+    await fetch('/api/org/departments', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
       body: JSON.stringify({ name: newDept })
@@ -40,7 +40,7 @@ const Departments = () => {
   const addRole = async (e) => {
     e.preventDefault();
     if (!newRole) return;
-    await fetch('http://localhost:5001/api/org/roles', {
+    await fetch('/api/org/roles', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
       body: JSON.stringify({ name: newRole })

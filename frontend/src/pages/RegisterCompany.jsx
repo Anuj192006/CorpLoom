@@ -18,7 +18,7 @@ const RegisterCompany = () => {
     e.preventDefault();
     setError('');
     try {
-      const res = await fetch('http://localhost:5001/api/auth/register-company', {
+      const res = await fetch('/api/auth/register-company', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)

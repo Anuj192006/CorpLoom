@@ -14,7 +14,7 @@ const Dashboard = () => {
 
   const fetchStats = async () => {
     try {
-      const res = await fetch('http://localhost:5001/api/dashboard/stats', {
+      const res = await fetch('/api/dashboard/stats', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();

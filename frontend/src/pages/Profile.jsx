@@ -6,7 +6,7 @@ const Profile = () => {
   const [profile, setProfile] = useState(null);
 
   useEffect(() => {
-    fetch('http://localhost:5001/api/employees/profile', {
+    fetch('/api/employees/profile', {
       headers: { 'Authorization': `Bearer ${token}` }
     })
     .then(res => res.json())

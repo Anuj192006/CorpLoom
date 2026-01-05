@@ -22,9 +22,9 @@ const Employees = () => {
   const fetchData = async () => {
     try {
       const [empRes, deptRes, roleRes] = await Promise.all([
-        fetch('http://localhost:5001/api/employees', { headers: { 'Authorization': `Bearer ${token}` } }),
-        fetch('http://localhost:5001/api/org/departments', { headers: { 'Authorization': `Bearer ${token}` } }),
-        fetch('http://localhost:5001/api/org/roles', { headers: { 'Authorization': `Bearer ${token}` } }),
+        fetch('/api/employees', { headers: { 'Authorization': `Bearer ${token}` } }),
+        fetch('/api/org/departments', { headers: { 'Authorization': `Bearer ${token}` } }),
+        fetch('/api/org/roles', { headers: { 'Authorization': `Bearer ${token}` } }),
       ]);
       const empData = await empRes.json();
       const deptData = await deptRes.json();
@@ -61,7 +61,7 @@ const Employees = () => {
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`http://localhost:5001/api/employees/setup/${editingId}`, {
+      const res = await fetch(`/api/employees/setup/${editingId}`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -81,7 +81,7 @@ const Employees = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure?')) return;
     try {
-      await fetch(`http://localhost:5001/api/employees/${id}`, {
+      await fetch(`/api/employees/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });

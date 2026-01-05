@@ -13,7 +13,7 @@ const Attendance = () => {
   const fetchRecords = async () => {
     try {
       const url = user.role === 'ADMIN' ? 'all' : 'my';
-      const res = await fetch(`http://localhost:5001/api/attendance/${url}`, {
+      const res = await fetch(`/api/attendance/${url}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
@@ -27,7 +27,7 @@ const Attendance = () => {
 
   const handleCheckIn = async () => {
     try {
-      const res = await fetch('http://localhost:5001/api/attendance/checkin', {
+      const res = await fetch('/api/attendance/checkin', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -43,7 +43,7 @@ const Attendance = () => {
 
   const handleCheckOut = async () => {
     try {
-      const res = await fetch('http://localhost:5001/api/attendance/checkout', {
+      const res = await fetch('/api/attendance/checkout', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });
