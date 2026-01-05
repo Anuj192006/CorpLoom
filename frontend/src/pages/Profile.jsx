@@ -6,12 +6,14 @@ const Profile = () => {
   const [profile, setProfile] = useState(null);
 
   useEffect(() => {
-    fetch('/api/employees/profile', {
-      headers: { 'Authorization': `Bearer ${token}` }
-    })
-    .then(res => res.json())
-    .then(data => setProfile(data));
-  }, []);
+    if (token) {
+      fetch('/api/employees/profile', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      .then(res => res.json())
+      .then(data => setProfile(data));
+    }
+  }, [token]);
 
   if (!profile) return <div>Loading Profile...</div>;
 
@@ -26,7 +28,7 @@ const Profile = () => {
         <div>{profile.email}</div>
 
         <div style={{ fontWeight: 'bold' }}>Company:</div>
-        <div>{profile.company.name}</div>
+        <div>{profile.company?.name || 'N/A'}</div>
 
         <div style={{ fontWeight: 'bold' }}>Department:</div>
         <div>{profile.employee?.department?.name || 'Unassigned'}</div>

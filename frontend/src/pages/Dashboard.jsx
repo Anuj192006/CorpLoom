@@ -7,10 +7,10 @@ const Dashboard = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (user.role === 'ADMIN') {
+    if (user.role === 'ADMIN' && token) {
       fetchStats();
     }
-  }, []);
+  }, [token]);
 
   const fetchStats = async () => {
     try {
