@@ -10,8 +10,23 @@ const Profile = () => {
       fetch('/api/employees/profile', {
         headers: { 'Authorization': `Bearer ${token}` }
       })
-      .then(res => res.json())
-      .then(data => setProfile(data));
+      .then(async res => {
+        const contentType = res.headers.get("content-type");
+        if (!res.ok) {
+           const text = await res.text();
+           throw new Error(`Server error: ${res.status}. ${text.substring(0, 50)}...`);
+        }
+        if (!contentType || !contentType.includes("application/json")) {
+          const text = await res.text();
+          throw new Error(`Expected JSON but got ${contentType}. Body: ${text.substring(0, 50)}...`);
+        }
+        return res.json();
+      })
+      .then(data => setProfile(data))
+      .catch(err => {
+        console.error("Profile fetch error:", err);
+        setProfile({ name: "Error Loading Profile", email: err.message, company: { name: "N/A" } });
+      });
     }
   }, [token]);
 
