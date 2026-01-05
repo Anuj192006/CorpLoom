@@ -1,36 +1,13 @@
 {
     "version": 2,
-    "builds": [
+    "rewrites": [
         {
-            "src": "backend/index.js",
-            "use": "@vercel/node",
-            "config": {
-                "includeFiles": [
-                    "prisma/schema.prisma"
-                ]
-            }
+            "source": "/api/(.*)",
+            "destination": "/backend/index.js"
         },
         {
-            "src": "frontend/package.json",
-            "use": "@vercel/static-build",
-            "config": {
-                "distDir": "dist"
-            }
-        }
-    ],
-    "routes": [
-        {
-            "src": "/api/(.*)",
-            "dest": "backend/index.js"
-        },
-        {
-            "src": "/(.*)",
-            "dest": "frontend/$1",
-            "check": true
-        },
-        {
-            "src": "/(.*)",
-            "dest": "frontend/index.html"
+            "source": "/(.*)",
+            "destination": "/frontend/$1"
         }
     ]
 }
